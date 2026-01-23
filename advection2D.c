@@ -56,6 +56,11 @@ int main(){
   /* Velocity */
   const float velx=1.0; // Velocity in x direction
   const float vely=0.0; // Velocity in y direction
+
+  /* Log-law vertical shear paramaters (Task 2.3) */
+  const float ustar = 0.2;
+  const float z0 = 1.0;
+  const float kappa = 0.41;
   
   /* Arrays to store variables. These have NX+2 elements
      to allow boundary values to be stored at both ends */
@@ -73,7 +78,11 @@ int main(){
   
   /* Calculate time step using the CFL condition */
   /* The fabs function gives the absolute value in case the velocity is -ve */
-  float dt = CFL / ( (fabs(velx) / dx) + (fabs(vely) / dy) );
+  float z_top = ymax - 0.5 * dy;
+  float vmaxx = (z_top > z0) ? (ustar/kappa) * logf(z_top/z0) : 0.0;
+
+  float dt = CFL / ( (fabsf(vmaxx) / dx) + (fabsf(vely) / dy) );
+
   
   /*** Report information about the calculation ***/
   printf("Grid spacing dx     = %g\n", dx);
@@ -152,7 +161,9 @@ int main(){
 #pragma omp for
     for (int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
-	dudt[i][j] = -velx * (u[i][j] - u[i-1][j]) / dx
+        float z = y[j];
+        float vx_local = (z > z0) ? (ustar/kappa)*logf(z/z0) : 0.0;
+	dudt[i][j] = -vx_local * (u[i][j] - u[i-1][j]) / dx
 	            - vely * (u[i][j] - u[i][j-1]) / dy;
       }
     }

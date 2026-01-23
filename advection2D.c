@@ -194,6 +194,20 @@ int main(){
   }
   fclose(finalfile);
 
+
+  FILE *avgfile;
+  avgfile = fopen("u_vertavg.dat", "w");
+  for (int i=1;i<NX+1; i++) {
+    double sum = 0.0;
+    for (int j=1; j < NY+1; j++) {
+      sum += u[i][j];
+    }
+    double uavg = sum/ (double)NY;
+    fprintf(avgfile, "%g %g\n", x[i], uavg);
+  }
+  fclose(finalfile);
+
+
   return 0;
 }
 

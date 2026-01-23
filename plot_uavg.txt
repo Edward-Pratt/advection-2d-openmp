@@ -1,0 +1,8 @@
+set terminal png enhanced
+set output "u_vertavg.png"
+
+set xlabel "x"
+set ylabel "Vertically averaged u"
+set xrange [0:30]
+
+plot "u_vertavg.dat" u 1:2 w l notitle
